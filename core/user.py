@@ -8,15 +8,15 @@ from core.account import Account
 class UserProfile:
     name: str
     email: str = ""
-    phone: str = ""
+    phone: str = ""                      # optional profile fields
 
 @dataclass
 class User:
     username: str
-    password_hash: str
+    password_hash: str                   # store password in hashed form
     profile: UserProfile
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    accounts: List[Account] = field(default_factory=list)
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))   # auto-generated unique user ID
+    accounts: List[Account] = field(default_factory=list)        # multiple accounts per user allowed
 
     def add_account(self, account: Account):
-        self.accounts.append(account)
+        self.accounts.append(account)    # link account to the user

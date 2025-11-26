@@ -9,9 +9,9 @@ class Account:
     name: str
     account_type: str = "wallet"  # wallet, bank, card
     balance: float = 0.0
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))   # auto-generate unique ID for each account
     transactions: List[Transaction] = field(default_factory=list)
 
     def add_transaction(self, tx: Transaction):
-        self.transactions.append(tx)
-        self.balance += tx.signed_amount
+        self.transactions.append(tx)     # store transaction inside the account
+        self.balance += tx.signed_amount # update balance (income + / expense -)

@@ -6,9 +6,9 @@ from core.transaction import Transaction
 
 class StorageManager:
     def __init__(self):
-        os.makedirs(DATA_DIR, exist_ok=True)
+        os.makedirs(DATA_DIR, exist_ok=True)     # ensure data folder exists
 
-        # Make sure users file exists
+        # Create users.json if missing
         if not os.path.exists(USERS_FILE):
             with open(USERS_FILE, "w", encoding="utf-8") as f:
                 json.dump([], f)
@@ -19,6 +19,7 @@ class StorageManager:
     def save_users(self, users: list):
         arr = []
         for u in users:
+            # convert User objects → dictionary to store as JSON
             arr.append({
                 "id": u.id,
                 "username": u.username,
@@ -39,11 +40,13 @@ class StorageManager:
 
         users = []
         for item in arr:
+            # recreate UserProfile object from stored data
             profile = UserProfile(
                 item["profile"].get("name", ""),
                 item["profile"].get("email", ""),
                 item["profile"].get("phone", "")
             )
+            # recreate User object
             u = User(
                 item["username"],
                 item["password_hash"],
@@ -54,11 +57,9 @@ class StorageManager:
 
         return users
 
-    # --------------------------
-    # PER-USER TRANSACTION FILES
-    # --------------------------
+    
     def get_user_tx_file(self, user_id):
-        return os.path.join(DATA_DIR, f"transactions_{user_id}.json")
+        return os.path.join(DATA_DIR, f"transactions_{user_id}.json")   # each user has a separate transaction file
 
     def load_transactions(self, user_id):
         path = self.get_user_tx_file(user_id)
@@ -75,6 +76,7 @@ class StorageManager:
         txs = []
         for item in arr:
             try:
+                # convert saved transaction dict → Transaction object
                 txs.append(
                     Transaction(
                         item["amount"],
@@ -95,6 +97,7 @@ class StorageManager:
 
         arr = []
         for t in transactions:
+            # convert Transaction objects → dict for JSON storage
             arr.append({
                 "id": t.id,
                 "amount": t.amount,

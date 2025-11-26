@@ -9,7 +9,7 @@ class RegisterPage(tk.Frame):
     def __init__(self, master, controller):
         super().__init__(master)
         self.controller = controller
-        self.sm = StorageManager()
+        self.sm = StorageManager()          # handles saving/loading users from storage
         self.build_ui()
 
     def build_ui(self):
@@ -29,22 +29,24 @@ class RegisterPage(tk.Frame):
     def register(self):
         uname = self.username.get().strip()
         pwd = self.password.get().strip()
-        name = self.fullname.get().strip() or uname
+        name = self.fullname.get().strip() or uname   # if full name empty, use username instead
         if not uname or not pwd:
             messagebox.showerror("Error", "Enter username and password")
             return
+
         users = self.sm.load_users()
-        if any(u.username == uname for u in users):
+        if any(u.username == uname for u in users):   # prevents duplicate usernames
             messagebox.showerror("Error", "Username already exists")
             return
-        ph = PasswordHasher.hash_password(pwd)
+
+        ph = PasswordHasher.hash_password(pwd)        # convert password → hashed password
         profile = UserProfile(name=name)
-        u = User(uname, ph, profile)
+        u = User(uname, ph, profile)                  # create new user object
         users.append(u)
-        self.sm.save_users(users)
+        self.sm.save_users(users)                     # save updated list to storage
+
         messagebox.showinfo("Success", "Registered successfully. Please login.")
-        self.back_to_login()
+        self.back_to_login()                          # after registration, go back to login page
 
     def back_to_login(self):
-        self.controller.show_login()
-
+        self.controller.show_login()                  # switch screen to login

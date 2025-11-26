@@ -9,9 +9,10 @@ class Transaction:
     category: str
     ttype: str  # 'expense' or 'income'
     note: str = ""
-    date: str = field(default_factory=lambda: datetime.now().isoformat())
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    date: str = field(default_factory=lambda: datetime.now().isoformat())  # auto-store timestamp in ISO format
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))             # unique transaction ID
 
     @property
     def signed_amount(self):
+        # expense = negative amount, income = positive amount
         return -self.amount if self.ttype == "expense" else self.amount

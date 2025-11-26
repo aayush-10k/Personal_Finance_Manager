@@ -6,5 +6,5 @@ import uuid
 class Budget:
     category: str
     amount: float
-    month: str  # 'YYYY-MM'
-    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    month: str  # format: YYYY-MM (budget applies to a specific month)
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))  # auto-generate unique budget ID

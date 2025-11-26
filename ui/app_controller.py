@@ -12,13 +12,13 @@ class AppController:
     """
     def __init__(self, root):
         self.root = root
-        self.current_frame = None
-        self.user = None
-        self.show_login()
+        self.current_frame = None      # stores the page currently displayed
+        self.user = None               # stores logged-in user object
+        self.show_login()              # first screen to display
 
     def clear(self):
         if self.current_frame:
-            self.current_frame.destroy()
+            self.current_frame.destroy()   # remove previous page from window
             self.current_frame = None
 
     def show_login(self):
@@ -27,7 +27,7 @@ class AppController:
         self.current_frame.pack(fill="both", expand=True)
 
     def show_dashboard(self, user):
-        self.user = user
+        self.user = user                  # keep track of logged-in user
         self.clear()
         self.current_frame = DashboardPage(self.root, controller=self, user=user)
         self.current_frame.pack(fill="both", expand=True)
@@ -43,5 +43,5 @@ class AppController:
         self.current_frame.pack(fill="both", expand=True)
 
     def logout(self):
-        self.user = None
-        self.show_login()
+        self.user = None                  # remove user session on logout
+        self.show_login()                 # return to login page

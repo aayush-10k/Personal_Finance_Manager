@@ -11,7 +11,7 @@ class ReportPage(tk.Frame):
         super().__init__(master)
         self.controller = controller
         self.user = user
-        self.sm = StorageManager()
+        self.sm = StorageManager()                  # used to load transactions from storage
         self.build_ui()
 
     def build_ui(self):
@@ -23,18 +23,19 @@ class ReportPage(tk.Frame):
         tk.Button(
             top,
             text="Back",
-            command=lambda: self.controller.show_dashboard(self.user)
+            command=lambda: self.controller.show_dashboard(self.user)   # go back to dashboard page
         ).pack(side="right", padx=10)
 
         now = datetime.datetime.now()
-        txs = self.sm.load_transactions(self.user.id)
+        txs = self.sm.load_transactions(self.user.id)                  # fetch all transactions for user
         rg = ReportGenerator(txs)
-        summary = rg.monthly_summary(now.year, now.month)
+        summary = rg.monthly_summary(now.year, now.month)              # get report for current month only
 
         income = summary["income"]
         expense = summary["expense"]
         net = income - expense
 
+        # display profit or loss status
         if net > 0:
             net_text = f"Net Profit: +{net:.2f}"
         else:
@@ -47,24 +48,22 @@ class ReportPage(tk.Frame):
         ).pack(pady=6)
 
         # Build chart
-        cats = list(summary["by_category"].keys())
-        vals = [summary["by_category"][c] for c in cats]
+        cats = list(summary["by_category"].keys())                    # list of categories
+        vals = [summary["by_category"][c] for c in cats]              # spending/income per category
 
         fig, ax = plt.subplots(figsize=(6, 3))
 
         if cats:
-            # Color rules:
-            # Positive = income = green
-            # Negative = expense = red
+            # income → green  | expense → red
             colors = ["green" if v > 0 else "red" for v in vals]
 
             ax.bar(cats, vals, color=colors)
-            ax.axhline(0, color="black", linewidth=1)
+            ax.axhline(0, color="black", linewidth=1)                  # baseline at zero
             ax.set_title(f"Category Breakdown for {now.strftime('%B %Y')}")
             ax.set_ylabel("Amount")
-
             fig.tight_layout()
 
+            # embed matplotlib chart inside Tkinter window
             canvas = FigureCanvasTkAgg(fig, master=self)
             canvas.get_tk_widget().pack(fill="both", expand=True, padx=10, pady=8)
             canvas.draw()

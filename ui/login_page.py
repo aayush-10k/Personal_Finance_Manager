@@ -9,9 +9,9 @@ from ui.register_page import RegisterPage
 class LoginPage(tk.Frame):
     def __init__(self, master, controller):
         super().__init__(master)
-        self.controller = controller
+        self.controller = controller                  # used to switch screens after login
         self.sm = StorageManager()
-        self.users = self.sm.load_users()
+        self.users = self.sm.load_users()             # load list of registered users from storage
         self.build_ui()
 
     def build_ui(self):
@@ -36,21 +36,22 @@ class LoginPage(tk.Frame):
         if not uname or not pwd:
             messagebox.showerror("Error", "Enter username and password")
             return
-        self.users = self.sm.load_users()
+
+        self.users = self.sm.load_users()             # reload users to include newly registered ones
         for u in self.users:
             if u.username == uname:
+                # verify hashed password instead of plain-text comparison
                 if PasswordHasher.verify(u.password_hash, pwd):
                     messagebox.showinfo("Login", f"Welcome {u.profile.name or u.username}")
-                    # navigate to dashboard via controller
-                    self.controller.show_dashboard(u)
+                    self.controller.show_dashboard(u) # switch to dashboard on success
                     return
                 else:
                     messagebox.showerror("Login", "Invalid password")
                     return
+
         messagebox.showerror("Login", "User not found")
 
     def open_register(self):
-        self.controller.clear()
+        self.controller.clear()                       # remove current login screen
         self.controller.current_frame = RegisterPage(self.master, controller=self.controller)
         self.controller.current_frame.pack(fill="both", expand=True)
-

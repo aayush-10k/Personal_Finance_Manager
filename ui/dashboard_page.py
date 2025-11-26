@@ -36,21 +36,20 @@ class DashboardPage(tk.Frame):
         self.summary_label = tk.Label(summary_frame, text="Loading summary...", font=("Helvetica", 12))
         self.summary_label.pack(padx=8, pady=8)
 
-        # Recent transactions
+        # frame to show latest transaction list
         self.list_frame = tk.Frame(self)
         self.list_frame.pack(fill="both", expand=True, padx=12, pady=6)
 
-        self.update_summary()
+        self.update_summary()    # fetch and display summary + recent transactions
 
     def update_summary(self):
-        txs = self.sm.load_transactions(self.user.id)
+        txs = self.sm.load_transactions(self.user.id)   # get all transactions for logged-in user
         now = datetime.datetime.now()
         rg = ReportGenerator(txs)
-        summary = rg.monthly_summary(now.year, now.month)
+        summary = rg.monthly_summary(now.year, now.month)   # summary only for current month
 
         income = summary["income"]
         expense = summary["expense"]
-
         net = income - expense
 
         if net > 0:
@@ -63,32 +62,27 @@ class DashboardPage(tk.Frame):
             f"Expense: {expense:.2f}    "
             f"{net_text}"
         )
-
         self.summary_label.config(text=txt)
 
-        # Show last 10 transactions with time
+        # clear previously shown list before repopulating
         for widget in self.list_frame.winfo_children():
             widget.destroy()
 
+        # show recent 10 transactions (sorted by date)
         txs_sorted = sorted(txs, key=lambda t: t.date, reverse=True)[:10]
 
         for t in txs_sorted:
-            # Format date + time
             try:
                 dt = datetime.datetime.fromisoformat(t.date)
                 formatted = dt.strftime("%Y-%m-%d  %I:%M %p")
             except:
                 formatted = t.date
 
-            # Re-add icon before printed category
-            icon = ""
-
             from core.category import EXPENSE_CATEGORIES, INCOME_CATEGORIES
 
-            # Reverse lookup: plain → icon
+            # reverse mapping to add emojis/icons again
             lookup = {v: k for k, v in EXPENSE_CATEGORIES.items()}
             lookup.update({v: k for k, v in INCOME_CATEGORIES.items()})
-
             icon = lookup.get(t.category, "")
 
             line = (
@@ -96,9 +90,9 @@ class DashboardPage(tk.Frame):
                 f"{t.ttype}  |  {t.amount:.2f}  |  {t.note}"
             )
 
-
             tk.Label(self.list_frame, text=line, anchor="w").pack(fill="x")
 
     def logout(self):
+        # confirmation box before logout
         if tk.messagebox.askyesno("Logout", "Do you want to logout?"):
             self.controller.logout()

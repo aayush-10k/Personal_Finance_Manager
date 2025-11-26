@@ -1,26 +1,2 @@
 [
-  {
-    "id": "67ca66fc-44f9-4b82-9927-9b1d4cb2242e",
-    "amount": 10000.0,
-    "category": "Salary",
-    "ttype": "income",
-    "note": "Monthly Salary",
-    "date": "2025-11-25T16:19:01.472920"
-  },
-  {
-    "id": "e1a5d14f-2bec-48ab-97c7-8bf516740e70",
-    "amount": 200.0,
-    "category": "BlinkIt",
-    "ttype": "expense",
-    "note": "",
-    "date": "2025-11-25T16:22:59.744650"
-  },
-  {
-    "id": "6ffdad29-d5c3-4bdf-bbec-dbf12acc8b5a",
-    "amount": 10000.0,
-    "category": "Freelancing",
-    "ttype": "income",
-    "note": "",
-    "date": "2025-11-25T19:39:43.724180"
-  }
 ]
